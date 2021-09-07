@@ -1,0 +1,5 @@
+{
+  "python.linting.enabled": true,
+  "python.envFile": "${workspaceFolder}/local.env",
+  "python.defaultInterpreterPath": "${workspaceFolder}/env/Scripts/python.exe"
+}
