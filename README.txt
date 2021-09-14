@@ -15,7 +15,7 @@ If using VSCode, set Python interpreter path if it doesn't already pickup the vi
 Activate enviroment
 > .\env\Scripts\activate (Windows)
 
-> pip install -r requirements.txt
+> pip install -r requirements.dev.txt
 
 Start server
 > uvicorn main:app --reload

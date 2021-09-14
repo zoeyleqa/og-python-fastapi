@@ -6,9 +6,5 @@ from app.models import Role
 from app.schemas import RoleRead, RoleCreate
 
 router = CRUDRouter(
-  schema=RoleRead,
-  create_schema=RoleCreate,
-  db=get_db,
-  db_model=Role,
-  prefix="roles"
+    schema=RoleRead, create_schema=RoleCreate, db=get_db, db_model=Role, prefix="roles"
 )

@@ -6,11 +6,5 @@ from app.models import Attendee
 from app.schemas import AttendeeRead, AttendeeCreate
 
 router = CRUDRouter(
-  schema=AttendeeRead,
-  create_schema=AttendeeCreate,
-  db=get_db,
-  db_model=Attendee,
-  prefix="attendees",
-
-  paginate=250
+    schema=AttendeeRead, create_schema=AttendeeCreate, db=get_db, db_model=Attendee, prefix="attendees", paginate=250
 )

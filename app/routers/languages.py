@@ -6,9 +6,9 @@ from app.models import Language
 from app.schemas import LanguageRead, LanguageCreate
 
 router = CRUDRouter(
-  schema=LanguageRead,
-  create_schema=LanguageCreate,
-  db=get_db,
-  db_model=Language,
-  prefix="Languages"
+    schema=LanguageRead,
+    create_schema=LanguageCreate,
+    db=get_db,
+    db_model=Language,
+    prefix="Languages",
 )
