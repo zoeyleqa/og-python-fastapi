@@ -8,8 +8,10 @@ origins = [
     "http://localhost",
     "http://localhost:8080",
     "http://localhost:1337",
+    "http://localhost:6006",
     "http://127.0.0.1",
     "http://127.0.0.1:1337",
+    "http://127.0.0.1:6006",
     "http://cop.oakgrovetech.com/",
     "https://cop.oakgrovetech.com/",
 ]
