@@ -1,0 +1,17 @@
+{
+  "version": "2.0.0",
+  "tasks": [],
+  "inputs": [
+    {
+      "type": "promptString",
+      "id": "nameOfThingGenerated",
+      "description": "Name of thing generated."
+    },
+    {
+      "type": "pickString",
+      "id": "thingToGenerate",
+      "description": "Generate the selected thing",
+      "options": []
+    }
+  ]
+}
