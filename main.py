@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from app.routers import auth, users, attendees, roles, languages, languageCategories
+from app.routers import auth, users, attendees, roles, sites, events, exercises, groups, languages, languageCategories, permissionTags
 
 app = FastAPI()
 
@@ -28,9 +28,13 @@ app.include_router(auth.router)
 app.include_router(users.router)
 app.include_router(attendees.router)
 app.include_router(roles.router)
+app.include_router(sites.router)
+app.include_router(events.router)
+app.include_router(exercises.router)
+app.include_router(groups.router)
 app.include_router(languages.router)
 app.include_router(languageCategories.router)
-
+app.include_router(permissionTags.router)
 
 @app.on_event("startup")
 def on_startup():
