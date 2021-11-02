@@ -1,7 +1,7 @@
 from typing import List, Optional
 from pydantic import BaseModel
 from sqlmodel import SQLModel, Field, Column
-from datetime import datetime
+from datetime import date, datetime
 
 
 class UserCreate(BaseModel):
@@ -61,16 +61,49 @@ class EventsOnSiteRead(EventsOnSiteCreate):
         orm_mode = True
 
 
+class GroupCreate(BaseModel):
+    name: str
+    unit: str
+    lead_one: str
+    lead_two: str
+
+
+class GroupRead(GroupCreate):
+    id: int
+    # exercises: List[ExerciseCreate]
+
+    class Config():
+        orm_mode = True
+
+        
+class ExerciseCreate(BaseModel):
+    name: str
+    description: Optional[str] = None
+    background_color: str
+    text_color: str
+    GroupId: int
+    group: Optional[GroupCreate] = None
+
+
+class ExerciseRead(ExerciseCreate):
+    id: int
+
+    class Config():
+        orm_mode = True
+
+
 class EventCreate(BaseModel):
     name: str
-    open_at: datetime
-    start_at: datetime
-    end_at: datetime
-    infil_suspend_at: datetime
-    exfil_suspend_at: datetime
-    po_suspend_at: datetime
-    final_suspend_at: datetime
+    open_at: date
+    start_at: date
+    end_at: date
+    infil_suspend_at: date
+    exfil_suspend_at: date
+    po_suspend_at: date
+    final_suspend_at: date
     allow_override_dates: bool
+    SubGroupId: int
+    exercise: Optional[ExerciseCreate] = None
 
 
 class EventRead(EventCreate):
@@ -98,36 +131,6 @@ class SiteCreate(BaseModel):
 class SiteRead(SiteCreate):
     id: int
     # events: List[EventsOnSiteCreate]
-
-    class Config():
-        orm_mode = True
-
-
-class ExerciseCreate(BaseModel):
-    name: str
-    description: str
-    background_color: str
-    text_color: str
-    GroupId: int
-
-
-class ExerciseRead(ExerciseCreate):
-    id: int
-
-    class Config():
-        orm_mode = True
-
-
-class GroupCreate(BaseModel):
-    name: str
-    unit: str
-    lead_one: str
-    lead_two: str
-
-
-class GroupRead(GroupCreate):
-    id: int
-    # exercises: List[ExerciseCreate]
 
     class Config():
         orm_mode = True

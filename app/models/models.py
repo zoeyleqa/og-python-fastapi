@@ -157,8 +157,9 @@ class Attendee(SQLModel, table=True):
     driver_license_state: Optional[str] = Field(
         sa_column=Column("DriverLicState"))
 
-    # roles: List["Role"] = Relationship(
-    #     back_populates="attendees", link_model=AttendeeRoleLink)
+    # language: List["Language"] = Relationship(back_populates="attendee", link_model=AttendeeRoleLink)
+    # langCat: List["LanguageCategory"] = Relationship(back_populates="attendee", link_model=AttendeeRoleLink)
+    # role: List["Role"] = Relationship(back_populates="attendee", link_model=AttendeeRoleLink)
 
 
 class Role(SQLModel, table=True):
@@ -169,7 +170,7 @@ class Role(SQLModel, table=True):
     description: str
     pay: float
 
-    # attendees: List["Attendee"] = Relationship(
+    # attendee: Optional[Attendee] = Relationship(
     #     back_populates="roles", link_model=AttendeeRoleLink)
 
 
@@ -198,23 +199,29 @@ class Site(SQLModel, table=True):
 class Event(SQLModel, table=True):
     __tablename__ = "Events"
 
-    id: Optional[int] = Field(
-        # sa_column=Column("Id"),
-        primary_key=True, default=None)
+    id: Optional[int] = Field(primary_key=True, default=None)
     name: str = Field(sa_column=Column("Name"))
-    openAt: Optional[date] = Field(sa_column=Column("OpenDate"))
-    startAt: date = Field(sa_column=Column("StartDate"))
-    endAt: date = Field(sa_column=Column("EndDate"))
-    infilSuspendAt: Optional[date] = Field(
-        sa_column=Column("InfilSuspenseDate"))
-    exfilSuspendAt: Optional[date] = Field(
-        sa_column=Column("ExfilSuspenseDate"))
-    poSuspendAt: Optional[date] = Field(sa_column=Column("POSuspenseDate"))
-    finalSuspendAt: Optional[date] = Field(
-        sa_column=Column("FinalSuspenseDate"))
-    allowOverrideDates: Optional[bool] = Field(
-        sa_column=Column("OverrideDates"))
+    open_at: Optional[date] = Field(sa_column=Column("OpenDate"))
+    start_at: date = Field(sa_column=Column("StartDate"))
+    end_at: date = Field(sa_column=Column("EndDate"))
+    infil_suspend_at: Optional[date] = Field(
+        sa_column=Column("InfilSuspenseDate")
+    )
+    exfil_suspend_at: Optional[date] = Field(
+        sa_column=Column("ExfilSuspenseDate")
+    )
+    po_suspend_at: Optional[date] = Field(sa_column=Column("POSuspenseDate"))
+    final_suspend_at: Optional[date] = Field(
+        sa_column=Column("FinalSuspenseDate")
+    )
+    allow_override_dates: Optional[bool] = Field(
+        sa_column=Column("OverrideDates")
+    )
 
+    SubGroupId: int = Field(
+        default=None, foreign_key="SubGroups.id"
+    )
+    exercise: "Exercise" = Relationship(back_populates="event")
     # sites: List["Site"] = Relationship(
     #     back_populates="events",
     #     link_model=EventsOnSite
@@ -230,7 +237,7 @@ class Group(SQLModel, table=True):
     lead_one: Optional[str] = Field(sa_column=Column("OGTLead1"))
     lead_two: Optional[str] = Field(sa_column=Column("OGTLead2"))
 
-    # exercises: List["Exercise"] = Relationship(back_populates="group")
+    groupExercise: Optional["Exercise"] = Relationship(back_populates="group")
 
 
 class Exercise(SQLModel, table=True):
@@ -245,7 +252,8 @@ class Exercise(SQLModel, table=True):
     GroupId: Optional[int] = Field(
         default=None, foreign_key="MainGroups.id"
     )
-    # group: Optional[Group] = Relationship(back_populates="exercises")
+    group: Optional[Group] = Relationship(back_populates="groupExercise")
+    event: Optional[Event] = Relationship(back_populates="exercise")
 
 
 class Language(SQLModel, table=True):
