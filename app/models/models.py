@@ -6,17 +6,21 @@ from datetime import date
 
 # Linker tables toward top, since they need to be defined first in order for base
 # models to use them.
-# class AttendeeRoleLink(SQLModel, table=True):
-#     __tablename__ = "RS_People_Roles_Assiged"
 
-#     id: Optional[int] = Field(primary_key=True, default=None)
-#     role_id: Optional[int] = Field(
-#         sa_column=Column("RoleId"), default=None, foreign_key="Roles.Id", primary_key=True,
-#     )
-#     attendee_id: Optional[int] = Field(
-#         sa_column=Column("HumanResourceId"), default=None, foreign_key="RS_People.Id", primary_key=True
-#     )
-#     pay: float
+
+class AttendeeRoleLink(SQLModel, table=True):
+    __tablename__ = "RS_People_Roles_Assigned"
+
+    id: Optional[int] = Field(primary_key=True, default=None)
+    RoleId: Optional[int] = Field(
+        # sa_column=Column("RoleId"),
+        default=None, foreign_key="Roles.id", primary_key=True,
+    )
+    HumanResourceId: Optional[int] = Field(
+        # sa_column=Column("HumanResourceId"),
+        default=None, foreign_key="RS_People.id", primary_key=True
+    )
+    pay: float
 
 
 # class EventsOnSite(SQLModel, table=True):
@@ -24,15 +28,36 @@ from datetime import date
 
 #     id: Optional[int] = Field(primary_key=True, default=None)
 #     EventId: Optional[int] = Field(
-#         default=None, 
-#         foreign_key="Events.id", 
+#         default=None,
+#         foreign_key="Events.id",
 #         primary_key=True
 #     )
 #     SiteId: Optional[int] = Field(
-#         default=None, 
-#         foreign_key="Sites.id", 
+#         default=None,
+#         foreign_key="Sites.id",
 #         primary_key=True
 #     )
+
+class AttendeeLangLink(SQLModel, table=True):
+    __tablename__ = "RS_People_LangSkills_Assigned"
+
+    id: Optional[int] = Field(primary_key=True, default=None)
+    HumanResourceId: Optional[int] = Field(
+        # sa_column=Column("HumanResourceId"),
+        default=None, foreign_key="RS_People.id", primary_key=True,
+    )
+    LangId: Optional[int] = Field(
+        # sa_column=Column("LangId"),
+        default=None, foreign_key="Languages.id", primary_key=True
+    )
+    LangCatId: Optional[int] = Field(
+        # sa_column=Column("LangCatId"),
+        default=None, foreign_key="LanguageCategory.id", primary_key=True
+    )
+    test_date: Optional[date] = Field(
+        sa_column=Column("TestDate"))
+    test_score: Optional[float] = Field(
+        sa_column=Column("TestScore"))
 
 
 # Base models below
@@ -157,9 +182,12 @@ class Attendee(SQLModel, table=True):
     driver_license_state: Optional[str] = Field(
         sa_column=Column("DriverLicState"))
 
-    # language: List["Language"] = Relationship(back_populates="attendee", link_model=AttendeeRoleLink)
-    # langCat: List["LanguageCategory"] = Relationship(back_populates="attendee", link_model=AttendeeRoleLink)
-    # role: List["Role"] = Relationship(back_populates="attendee", link_model=AttendeeRoleLink)
+    langs: Optional["Language"] = Relationship(
+        back_populates="attendee_lang", link_model=AttendeeLangLink)
+    lang_cats: Optional["LanguageCategory"] = Relationship(
+        back_populates="attendee_lang_cat", link_model=AttendeeLangLink)
+    roles: Optional["Role"] = Relationship(
+        back_populates="attendee_role", link_model=AttendeeRoleLink)
 
 
 class Role(SQLModel, table=True):
@@ -170,8 +198,8 @@ class Role(SQLModel, table=True):
     description: str
     pay: float
 
-    # attendee: Optional[Attendee] = Relationship(
-    #     back_populates="roles", link_model=AttendeeRoleLink)
+    attendee_role: Optional[Attendee] = Relationship(
+        back_populates="roles", link_model=AttendeeRoleLink)
 
 
 class Site(SQLModel, table=True):
@@ -191,7 +219,7 @@ class Site(SQLModel, table=True):
     longitude_sec: Optional[float] = Field(sa_column=Column("LongSec"))
 
     # events: List["Event"] = Relationship(
-    #   back_populates="sites", 
+    #   back_populates="sites",
     #   link_model=EventsOnSite
     # )
 
@@ -263,6 +291,9 @@ class Language(SQLModel, table=True):
     name: str = Field(sa_column=Column("Language"))
     comment: str
 
+    attendee_lang: Optional[Attendee] = Relationship(
+        back_populates="langs", link_model=AttendeeLangLink)
+
 
 class LanguageCategory(SQLModel, table=True):
     __tablename__ = "LanguageCategory"
@@ -270,6 +301,9 @@ class LanguageCategory(SQLModel, table=True):
     id: Optional[int] = Field(primary_key=True, default=None)
     name: str = Field(sa_column=Column("category"))
     description: str
+
+    attendee_lang_cat: Optional[Attendee] = Relationship(
+        back_populates="lang_cats", link_model=AttendeeLangLink)
 
 
 class PermissionTag(SQLModel, table=True):

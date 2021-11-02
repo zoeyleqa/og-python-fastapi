@@ -18,27 +18,6 @@ class UserRead(UserCreate):
     last_sign_in: datetime
 
 
-class AttendeeCreate(BaseModel):
-    first_name: str
-    middle_name: str
-    last_name: str
-    email: str
-    street: str
-    city: str
-    state: str
-    country_code: str
-    status: str
-    is_us_citizen: bool
-
-
-class AttendeeRead(AttendeeCreate):
-    id: int
-
-    # Since we use this in a query, we need ORM model on. If this was a SQLModel
-    # class Config():
-    #   orm_mode = True
-
-
 class RoleCreate(BaseModel):
     name: str
     description: str
@@ -47,6 +26,9 @@ class RoleCreate(BaseModel):
 
 class RoleRead(RoleCreate):
     id: int
+
+    class Config():
+        orm_mode = True
 
 
 class EventsOnSiteCreate(BaseModel):
@@ -75,7 +57,7 @@ class GroupRead(GroupCreate):
     class Config():
         orm_mode = True
 
-        
+
 class ExerciseCreate(BaseModel):
     name: str
     description: Optional[str] = None
@@ -144,14 +126,45 @@ class LanguageCreate(BaseModel):
 class LanguageRead(LanguageCreate):
     id: int
 
+    class Config():
+        orm_mode = True
+
 
 class LanguageCategoryCreate(BaseModel):
     name: str
     description: Optional[str]
 
+    class Config():
+        orm_mode = True
+
 
 class LanguageCategoryRead(LanguageCategoryCreate):
     id: int
+
+
+
+class AttendeeCreate(BaseModel):
+    first_name: str
+    middle_name: str
+    last_name: str
+    email: str
+    street: str
+    city: str
+    state: str
+    country_code: str
+    status: str
+    is_us_citizen: bool
+
+
+class AttendeeRead(AttendeeCreate):
+    id: int
+    langs: List[LanguageCreate] = []
+    lang_cats: List[LanguageCategoryCreate] = []
+    roles: List[RoleCreate] = []
+
+    # Since we use this in a query, we need ORM model on. If this was a SQLModel
+    class Config():
+        orm_mode = True
 
 
 class PermissionTagCreate(BaseModel):
