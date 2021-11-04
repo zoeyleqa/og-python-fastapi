@@ -4,18 +4,6 @@ from sqlmodel import SQLModel, Field, Column
 from datetime import date, datetime
 
 
-class UserCreate(BaseModel):
-    username: str
-    first_name: str
-    last_name: str
-    email: str
-    password: str
-    admin: bool = Field(default=False)
-
-
-class UserRead(UserCreate):
-    id: int
-    last_sign_in: datetime
 
 
 class RoleCreate(BaseModel):
@@ -65,6 +53,7 @@ class ExerciseCreate(BaseModel):
     text_color: str
     GroupId: int
     group: Optional[GroupCreate] = None
+    # exercise_user: Optional[UserCreate] = None
 
 
 class ExerciseRead(ExerciseCreate):
@@ -85,7 +74,7 @@ class EventCreate(BaseModel):
     final_suspend_at: date
     allow_override_dates: bool
     SubGroupId: int
-    exercise: Optional[ExerciseCreate] = None
+    event_exercise: Optional[ExerciseCreate] = None
 
 
 class EventRead(EventCreate):
@@ -142,7 +131,6 @@ class LanguageCategoryRead(LanguageCategoryCreate):
     id: int
 
 
-
 class AttendeeCreate(BaseModel):
     first_name: str
     middle_name: str
@@ -160,7 +148,7 @@ class AttendeeRead(AttendeeCreate):
     id: int
     langs: List[LanguageCreate] = []
     lang_cats: List[LanguageCategoryCreate] = []
-    roles: List[RoleCreate] = []
+    attendee_roles: List[RoleCreate] = []
 
     # Since we use this in a query, we need ORM model on. If this was a SQLModel
     class Config():
@@ -170,10 +158,29 @@ class AttendeeRead(AttendeeCreate):
 class PermissionTagCreate(BaseModel):
     name: str
     description: str
+    # tag_user: Optional[UserCreate] = None
+
+    class Config():
+        orm_mode = True
 
 
 class PermissionTagRead(PermissionTagCreate):
     id: int
+class UserCreate(BaseModel):
+    username: str
+    first_name: str
+    last_name: str
+    email: str
+    password: str
+    admin: bool = Field(default=False)
+
+
+class UserRead(UserCreate):
+    id: int
+    last_sign_in: datetime
+    user_tag: List[PermissionTagCreate] = []
+    class Config():
+        orm_mode = True
 
 
 class Login(BaseModel):
