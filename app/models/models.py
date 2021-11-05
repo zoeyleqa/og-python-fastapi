@@ -1,5 +1,5 @@
 from typing import Optional, List
-from sqlmodel import SQLModel, Field, Column, Relationship
+from sqlmodel import SQLModel, Field, Column, Relationship, ForeignKey
 from datetime import date
 
 # TODO Relationship definitions
@@ -42,18 +42,13 @@ class AttendeeLangLink(SQLModel, table=True):
     __tablename__ = "RS_People_LangSkills_Assigned"
 
     id: Optional[int] = Field(primary_key=True, default=None)
-    HumanResourceId: Optional[int] = Field(
-        # sa_column=Column("HumanResourceId"),
-        default=None, foreign_key="RS_People.id", primary_key=True,
-    )
-    LangId: Optional[int] = Field(
-        # sa_column=Column("LangId"),
-        default=None, foreign_key="Languages.id", primary_key=True
-    )
-    LangCatId: Optional[int] = Field(
-        # sa_column=Column("LangCatId"),
-        default=None, foreign_key="LanguageCategory.id", primary_key=True
-    )
+    hr_id: Optional[int] = Field(sa_column=Column(
+        "HumanResourceId", ForeignKey("RS_People.id"), primary_key=True, default=None))
+
+    lang_id: Optional[int] = Field(sa_column=Column(
+        "LangId", ForeignKey("Languages.id"), primary_key=True, default=None))
+    lang_cat_id: Optional[int] = Field(sa_column=Column(
+        "LangCatId", ForeignKey("LanguageCategory.id"), primary_key=True, default=None))
     test_date: Optional[date] = Field(
         sa_column=Column("TestDate"))
     test_score: Optional[float] = Field(
@@ -64,25 +59,10 @@ class UserTagPermLink(SQLModel, table=True):
     __tablename__ = "UserTagPermissions"
 
     id: Optional[int] = Field(primary_key=True, default=None)
-    Tag: Optional[int] = Field(
-        # sa_column=Column("RoleId"),
-        default=None, foreign_key="PermissionTags.Tag", primary_key=True,
-    )
-    HumanResourceId: Optional[int] = Field(
-        # sa_column=Column("HumanResourceId"),
-        default=None, foreign_key="Users.User_ID", primary_key=True
-    )
-    # hr_id: Optional[int] = Field(
-    #     sa_column=Column("HumanResourceId",
-    #                      primary_key=True), foreign_key="Users.User_ID", 
-    #     default=None
-    # )
-    # tag: Optional[str] = Field(
-    #     sa_column=Column(
-    #         "Tag", primary_key=False),
-    #     foreign_key="PermissionTags.Tag",
-    #     default=None
-    # )
+    hr_id: Optional[int] = Field(sa_column=Column(
+        "HumanResourceId", ForeignKey("Users.User_ID"), primary_key=True, default=None))
+    tag: Optional[str] = Field(sa_column=Column("Tag", ForeignKey(
+        "PermissionTags.Tag"), primary_key=False, default=None))
     access_rights: Optional[str] = Field(sa_column=Column("AccessRights"))
 
 
@@ -90,24 +70,10 @@ class UserExercisePermLink(SQLModel, table=True):
     __tablename__ = "UserExercisePermissions"
 
     id: Optional[int] = Field(primary_key=True, default=None)
-    SubGroupId: Optional[int] = Field(
-        # sa_column=Column("RoleId"),
-        default=None, foreign_key="SubGroups.id", primary_key=True,
-    )
-    UserId: Optional[int] = Field(
-        # sa_column=Column("HumanResourceId"),
-        default=None, foreign_key="Users.User_ID", primary_key=True
-    )
-    # user_id: Optional[int] = Field(
-    #     sa_column=Column("UserId",
-    #                      foreign_key="Users.User_ID", primary_key=True),
-    #     default=None
-    # )
-    # exercise_id: Optional[int] = Field(
-    #     sa_column=Column(
-    #         "SubGroupId", foreign_key="SubGroups.id", primary_key=True),
-    #     default=None
-    # )
+    user_id: Optional[int] = Field(sa_column=Column(
+        "UserId", ForeignKey("Users.User_ID"), primary_key=True, default=None))
+    exercise_id: Optional[int] = Field(sa_column=Column(
+        "SubGroupId", ForeignKey("SubGroups.id"), primary_key=True, default=None))
 
 
 # Base models below
@@ -136,9 +102,9 @@ class User(SQLModel, table=True):
     password_request: Optional[str] = Field(
         sa_column=Column("PasswordRequest"))
 
-    user_tag: Optional["PermissionTag"] = Relationship(
+    user_tags: Optional["PermissionTag"] = Relationship(
         back_populates="tag_user", link_model=UserTagPermLink)
-    user_exercise: Optional["Exercise"] = Relationship(
+    user_exercises: Optional["Exercise"] = Relationship(
         back_populates="exercise_user", link_model=UserExercisePermLink)
 
 
@@ -331,15 +297,14 @@ class Exercise(SQLModel, table=True):
     description: Optional[str] = Field(sa_column=Column("Description"))
     background_color: Optional[str] = Field(sa_column=Column("BkColor"))
     text_color: Optional[str] = Field(sa_column=Column("TextColor"))
+    group_id: Optional[int] = Field(sa_column=Column(
+        "GroupId", ForeignKey("MainGroups.id"), default=None))
 
-    GroupId: Optional[int] = Field(
-        default=None, foreign_key="MainGroups.id"
-    )
     group: Optional[Group] = Relationship(back_populates="group_exercise")
     exercise_event: Optional[Event] = Relationship(
         back_populates="event_exercise")
     exercise_user: Optional[User] = Relationship(
-        back_populates="user_exercise", link_model=UserExercisePermLink)
+        back_populates="user_exercises", link_model=UserExercisePermLink)
 
 
 class Language(SQLModel, table=True):
@@ -369,9 +334,6 @@ class PermissionTag(SQLModel, table=True):
 
     id: Optional[int] = Field(primary_key=True, default=None)
     tag: str = Field(sa_column=Column("Tag"))
-    # tag: Optional[str] = Field(
-    #     sa_column=Column("Tag", foreign_key="UserTagPermissions.tag"),
-    #     default=None
-    # )
+
     tag_user: Optional[User] = Relationship(
-        back_populates="user_tag", link_model=UserTagPermLink)
+        back_populates="user_tags", link_model=UserTagPermLink)

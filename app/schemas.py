@@ -51,7 +51,7 @@ class ExerciseCreate(BaseModel):
     description: Optional[str] = None
     background_color: str
     text_color: str
-    GroupId: int
+    group_id: int
     group: Optional[GroupCreate] = None
     # exercise_user: Optional[UserCreate] = None
 
@@ -135,6 +135,9 @@ class AttendeeCreate(BaseModel):
     first_name: str
     middle_name: str
     last_name: str
+    nick_name: str
+    suffix: str
+    sex: str
     email: str
     street: str
     city: str
@@ -156,9 +159,7 @@ class AttendeeRead(AttendeeCreate):
 
 
 class PermissionTagCreate(BaseModel):
-    name: str
-    description: str
-    # tag_user: Optional[UserCreate] = None
+    tag: str
 
     class Config():
         orm_mode = True
@@ -166,6 +167,8 @@ class PermissionTagCreate(BaseModel):
 
 class PermissionTagRead(PermissionTagCreate):
     id: int
+
+
 class UserCreate(BaseModel):
     username: str
     first_name: str
@@ -178,7 +181,10 @@ class UserCreate(BaseModel):
 class UserRead(UserCreate):
     id: int
     last_sign_in: datetime
-    user_tag: List[PermissionTagCreate] = []
+    user_tags: List[PermissionTagCreate] = []
+    user_exercises: List[ExerciseCreate] = []
+
+
     class Config():
         orm_mode = True
 
