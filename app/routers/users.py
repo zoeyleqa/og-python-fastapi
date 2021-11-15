@@ -5,6 +5,7 @@ from app import schemas, oauth2
 from app.services import users
 from sqlmodel import Session
 from app.hashing import Hash
+from typing import List
 
 router = APIRouter(
     prefix="/users",
@@ -23,6 +24,19 @@ def create(
     args: schemas.UserCreate,
 ):
     return users.create(args, session)
+
+
+@router.get("", response_model=List[schemas.UserRead], status_code=status.HTTP_200_OK)
+def show_all(*, session: Session = Depends(get_session)):
+    all_users = users.show_all(session)
+
+    if not all_users:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"No user is found",
+        )
+
+    return all_users
 
 
 @router.get("/{id}", response_model=schemas.UserRead, status_code=status.HTTP_200_OK)

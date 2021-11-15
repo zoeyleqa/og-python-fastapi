@@ -4,8 +4,6 @@ from sqlmodel import SQLModel, Field, Column
 from datetime import date, datetime
 
 
-
-
 class RoleCreate(BaseModel):
     name: str
     description: str
@@ -54,6 +52,11 @@ class ExerciseCreate(BaseModel):
     group_id: int
     group: Optional[GroupCreate] = None
     # exercise_user: Optional[UserCreate] = None
+
+
+class ExerciseNameRead(BaseModel):
+    id: int
+    name: str
 
 
 class ExerciseRead(ExerciseCreate):
@@ -169,6 +172,16 @@ class PermissionTagRead(PermissionTagCreate):
     id: int
 
 
+class UserTagPermLinkCreate(BaseModel):
+    tag: str
+    access_rights: str
+
+
+class UserTagPermLinkRead(UserTagPermLinkCreate):
+    id: int
+    hr_id: int
+
+
 class UserCreate(BaseModel):
     username: str
     first_name: str
@@ -181,9 +194,8 @@ class UserCreate(BaseModel):
 class UserRead(UserCreate):
     id: int
     last_sign_in: datetime
-    user_tags: List[PermissionTagCreate] = []
-    user_exercises: List[ExerciseCreate] = []
-
+    user_access_rights: List[UserTagPermLinkRead] = []
+    user_exercises: List[ExerciseNameRead] = []
 
     class Config():
         orm_mode = True

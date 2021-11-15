@@ -65,6 +65,9 @@ class UserTagPermLink(SQLModel, table=True):
         "PermissionTags.Tag"), primary_key=False, default=None))
     access_rights: Optional[str] = Field(sa_column=Column("AccessRights"))
 
+    access_right_user: Optional["User"] = Relationship(
+        back_populates="user_access_rights")
+
 
 class UserExercisePermLink(SQLModel, table=True):
     __tablename__ = "UserExercisePermissions"
@@ -104,6 +107,8 @@ class User(SQLModel, table=True):
 
     user_tags: Optional["PermissionTag"] = Relationship(
         back_populates="tag_user", link_model=UserTagPermLink)
+    user_access_rights: Optional[UserTagPermLink] = Relationship(
+        back_populates="access_right_user")
     user_exercises: Optional["Exercise"] = Relationship(
         back_populates="exercise_user", link_model=UserExercisePermLink)
 
