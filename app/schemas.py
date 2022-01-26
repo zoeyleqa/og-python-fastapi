@@ -36,22 +36,12 @@ class GroupCreate(BaseModel):
     lead_two: str
 
 
-class GroupRead(GroupCreate):
-    id: int
-    # exercises: List[ExerciseCreate]
-
-    class Config():
-        orm_mode = True
-
-
 class ExerciseCreate(BaseModel):
     name: str
     description: Optional[str] = None
     background_color: str
     text_color: str
     group_id: int
-    group: Optional[GroupCreate] = None
-    # exercise_user: Optional[UserCreate] = None
 
 
 class ExerciseNameRead(BaseModel):
@@ -59,8 +49,22 @@ class ExerciseNameRead(BaseModel):
     name: str
 
 
+class ExerciseIdRead(ExerciseCreate):
+    id: int
+
+
 class ExerciseRead(ExerciseCreate):
     id: int
+    exercise_group: Optional[GroupCreate] = None
+    # exercise_user: Optional[UserCreate] = None
+
+    class Config():
+        orm_mode = True
+
+
+class GroupRead(GroupCreate):
+    id: int
+    group_exercises: List[ExerciseIdRead] = []
 
     class Config():
         orm_mode = True

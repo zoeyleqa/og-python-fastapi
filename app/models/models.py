@@ -291,7 +291,7 @@ class Group(SQLModel, table=True):
     lead_one: Optional[str] = Field(sa_column=Column("OGTLead1"))
     lead_two: Optional[str] = Field(sa_column=Column("OGTLead2"))
 
-    group_exercise: Optional["Exercise"] = Relationship(back_populates="group")
+    group_exercises: Optional["Exercise"] = Relationship(back_populates="exercise_group")
 
 
 class Exercise(SQLModel, table=True):
@@ -305,7 +305,7 @@ class Exercise(SQLModel, table=True):
     group_id: Optional[int] = Field(sa_column=Column(
         "GroupId", ForeignKey("MainGroups.id"), default=None))
 
-    group: Optional[Group] = Relationship(back_populates="group_exercise")
+    exercise_group: Optional[Group] = Relationship(back_populates="group_exercises")
     exercise_event: Optional[Event] = Relationship(
         back_populates="event_exercise")
     exercise_user: Optional[User] = Relationship(
